@@ -8,7 +8,8 @@ import (
 )
 
 type Node interface {
-	Resolve(path []string) (*Link, []string, error)
+	Resolve(path []string) (interface{}, []string, error)
+	ResolveLink(path []string) (*Link, []string, error)
 	Tree() []string
 	Cid() *cid.Cid
 
