@@ -8,15 +8,30 @@ import (
 )
 
 type Node interface {
+	// Resolve resolves a path through this node, stopping at any link boundary
+	// and returning the object found as well as the remaining path to traverse
 	Resolve(path []string) (interface{}, []string, error)
+
+	// Tree lists all paths within the object under 'path', and up to the given depth.
+	// To list the entire object (similar to `find .`) pass "" and -1
+	Tree(path string, depth int) []string
+
+	// ResolveLink is a helper function that calls resolve and asserts the
+	// output is a link
 	ResolveLink(path []string) (*Link, []string, error)
-	Tree() []string
+
 	Cid() *cid.Cid
 
+	// Copy returns a deep copy of this node
+	Copy() Node
+
+	// Links is a helper function that returns all links within this object
 	Links() []*Link
 
-	//
+	// TODO: not sure if stat deserves to stay
 	Stat() (*NodeStat, error)
+
+	// Size returns the size in bytes of the serialized object
 	Size() (uint64, error)
 
 	// RawData marshals the node and returns the marshaled bytes
