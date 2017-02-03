@@ -9,9 +9,9 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmcqyBnUyn9NYC9nusuHw5rSBaXGqhfLb7wFh61ohGc2pK",
+      "hash": "QmTau856czj6wc5UyKQX2MfBQZ9iCZPsuUsVW2b2pRtLVp",
       "name": "go-cid",
-      "version": "0.7.7"
+      "version": "0.7.10"
     }
   ],
   "gxVersion": "0.10.0",
@@ -19,6 +19,6 @@
   "license": "",
   "name": "go-ipld-node",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.4.3"
+  "version": "0.4.4"
 }
 
