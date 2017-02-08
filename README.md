@@ -1,4 +1,4 @@
-go-ipld-node
+go-ipld-format
 ==================
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
@@ -7,7 +7,7 @@ go-ipld-node
 [![Coverage Status](https://coveralls.io/repos/github/ipfs/go-ipld-node/badge.svg?branch=master)](https://coveralls.io/github/ipfs/go-ipld-node?branch=master)
 [![Travis CI](https://travis-ci.org/ipfs/go-ipld-node.svg?branch=master)](https://travis-ci.org/ipfs/go-ipld-node)
 
-> go-ipld-node is the official 'node' interface for ipld, the interplanetary linked data format.
+> go-ipld-format is a set of interfaces that a type needs to implement in order to be a part of the ipld merkle-forest.
 
 
 ## Table of Contents

@@ -1,4 +1,4 @@
-package node
+package format
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
-type Node interface {
+type Resolver interface {
 	// Resolve resolves a path through this node, stopping at any link boundary
 	// and returning the object found as well as the remaining path to traverse
 	Resolve(path []string) (interface{}, []string, error)
@@ -15,6 +15,10 @@ type Node interface {
 	// Tree lists all paths within the object under 'path', and up to the given depth.
 	// To list the entire object (similar to `find .`) pass "" and -1
 	Tree(path string, depth int) []string
+}
+
+type Node interface {
+	Resolver
 
 	// ResolveLink is a helper function that calls resolve and asserts the
 	// output is a link

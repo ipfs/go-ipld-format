@@ -1,10 +1,10 @@
 {
   "author": "whyrusleeping",
   "bugs": {
-    "url": "https://github.com/ipfs/go-ipld-node"
+    "url": "https://github.com/ipfs/go-ipld-format"
   },
   "gx": {
-    "dvcsimport": "github.com/ipfs/go-ipld-node"
+    "dvcsimport": "github.com/ipfs/go-ipld-format"
   },
   "gxDependencies": [
     {
@@ -17,7 +17,7 @@
   "gxVersion": "0.10.0",
   "language": "go",
   "license": "",
-  "name": "go-ipld-node",
+  "name": "go-ipld-format",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
   "version": "0.4.5"
 }
