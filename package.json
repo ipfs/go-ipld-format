@@ -9,15 +9,15 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmZe3S3sXMWar3oPmrd8jHV8NoAWfPfLGFD8PsK3YrYpqv",
+      "hash": "QmNw61A6sJoXMeP37mJRtQZdNhj5e3FdjoTN3v4FyE96Gk",
       "name": "go-cid",
-      "version": "0.7.13"
+      "version": "0.7.15"
     },
     {
       "author": "stebalien",
-      "hash": "QmeK8xFAXx4GBpZG6mizck1XAunVtxP8Tmvir5FMwp5MYb",
+      "hash": "QmbJUay5h1HtzhJb5QQk2t26yCnJksHynvhcqp18utBPqG",
       "name": "go-block-format",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ],
   "gxVersion": "0.10.0",
