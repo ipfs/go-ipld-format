@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	blocks "github.com/ipfs/go-block-format"
+
 	cid "github.com/ipfs/go-cid"
 )
 
@@ -18,13 +20,12 @@ type Resolver interface {
 }
 
 type Node interface {
+	blocks.Block
 	Resolver
 
 	// ResolveLink is a helper function that calls resolve and asserts the
 	// output is a link
 	ResolveLink(path []string) (*Link, []string, error)
-
-	Cid() *cid.Cid
 
 	// Copy returns a deep copy of this node
 	Copy() Node
@@ -37,12 +38,6 @@ type Node interface {
 
 	// Size returns the size in bytes of the serialized object
 	Size() (uint64, error)
-
-	// RawData marshals the node and returns the marshaled bytes
-	RawData() []byte
-
-	String() string
-	Loggable() map[string]interface{}
 }
 
 type NodeGetter interface {

@@ -12,6 +12,12 @@
       "hash": "QmZe3S3sXMWar3oPmrd8jHV8NoAWfPfLGFD8PsK3YrYpqv",
       "name": "go-cid",
       "version": "0.7.13"
+    },
+    {
+      "author": "stebalien",
+      "hash": "QmeK8xFAXx4GBpZG6mizck1XAunVtxP8Tmvir5FMwp5MYb",
+      "name": "go-block-format",
+      "version": "0.1.0"
     }
   ],
   "gxVersion": "0.10.0",
@@ -19,6 +25,6 @@
   "license": "",
   "name": "go-ipld-format",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.4.7"
+  "version": "0.4.8"
 }
 
