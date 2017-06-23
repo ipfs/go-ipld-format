@@ -19,6 +19,10 @@ type Resolver interface {
 	Tree(path string, depth int) []string
 }
 
+// Node is the base interface all IPLD nodes must implement.
+//
+// Nodes are **Immutable** and all methods defined on the interface are
+// **Thread Safe**.
 type Node interface {
 	blocks.Block
 	Resolver
