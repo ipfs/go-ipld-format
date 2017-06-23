@@ -44,10 +44,6 @@ type Node interface {
 	Size() (uint64, error)
 }
 
-type NodeGetter interface {
-	Get(context.Context, *cid.Cid) (Node, error)
-}
-
 // Link represents an IPFS Merkle DAG Link between Nodes.
 type Link struct {
 	// utf string name. should be unique per object
