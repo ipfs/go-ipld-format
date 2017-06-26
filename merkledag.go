@@ -36,23 +36,9 @@ type DAGService interface {
 	// nodes of the passed in node.
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
 
-	Batch() Batch
+	AddMany([]Node) ([]*cid.Cid, error)
 
 	LinkService
-}
-
-// An interface for batch-adding nodes to a DAG.
-
-// TODO: Is this really the *right* level to do this at?
-// Why not just `DAGService.AddMany` + a concrete helper type?
-//
-// This will be a breaking change *regardless* of what we do as `Batch` *used*
-// to be a plain struct (passed around by pointer). I had to change this to
-// avoid requiring a `BlockService` (which would introduce the concept of
-// exchanges and I really don't want to go down that rabbit hole).
-type Batch interface {
-	Add(nd Node) (*cid.Cid, error)
-	Commit() error
 }
 
 // TODO: Replace this? I'm really not convinced this interface pulls its weight.
