@@ -6,18 +6,6 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
-// FindLinks searches this nodes links for the given key,
-// returns the indexes of any links pointing to it
-func FindLinks(links []*cid.Cid, c *cid.Cid, start int) []int {
-	var out []int
-	for i, lnk_c := range links[start:] {
-		if c.Equals(lnk_c) {
-			out = append(out, i+start)
-		}
-	}
-	return out
-}
-
 // GetDAG will fill out all of the links of the given Node.
 // It returns a channel of nodes, which the caller can receive
 // all the child nodes of 'root' on, in proper order.
@@ -69,10 +57,12 @@ func GetNodes(ctx context.Context, ds DAGService, keys []*cid.Cid) []*NodePromis
 				}
 
 				nd := opt.Node
-				is := FindLinks(keys, nd.Cid(), 0)
-				for _, i := range is {
-					count++
-					promises[i].Send(nd)
+				c := nd.Cid()
+				for i, lnk_c := range keys {
+					if c.Equals(lnk_c) {
+						count++
+						promises[i].Send(nd)
+					}
 				}
 			case <-ctx.Done():
 				return
