@@ -21,6 +21,31 @@ type NodeOption struct {
 // Just Resolver?
 type NodeGetter interface {
 	Get(context.Context, *cid.Cid) (Node, error)
+
+	// TODO(ipfs/go-ipfs#4009): Remove this method after fixing.
+	OfflineNodeGetter() NodeGetter
+}
+
+// NodeGetters can optionally implement this interface to make finding linked
+// objects faster.
+type LinkGetter interface {
+	NodeGetter
+	// TODO(ipfs/go-ipld-format#9): This should return []*cid.Cid
+	GetLinks(ctx context.Context, nd *cid.Cid) ([]*Link, error)
+}
+
+func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
+	if c.Type() == cid.Raw {
+		return nil, nil
+	}
+	if gl, ok := ng.(LinkGetter); ok {
+		return gl.GetLinks(ctx, c)
+	}
+	node, err := ng.Get(ctx, c)
+	if err != nil {
+		return nil, err
+	}
+	return node.Links(), nil
 }
 
 // DAGService is an IPFS Merkle DAG service.
@@ -37,38 +62,4 @@ type DAGService interface {
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
 
 	AddMany([]Node) ([]*cid.Cid, error)
-
-	LinkService
-}
-
-// TODO: Replace this? I'm really not convinced this interface pulls its weight.
-//
-// Instead, we could add an `Offline()` function to `NodeGetter` that returns an
-// offline `NodeGetter` and then define the following function:
-//
-// ```
-// func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
-// 	if c.Type() == cid.Raw {
-// 		return nil, nil
-// 	}
-// 	node, err := ng.Get(ctx, c)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return node.Links(), nil
-// }
-// ```
-//
-// Why *not* do this? We might decide to store a light-weight DAG of links
-// without actually storing the data. I don't really find that to be a
-// convincing argument.
-type LinkService interface {
-	// GetLinks return all links for a node.  The complete node does not
-	// necessarily have to exist locally, or at all.  For example, raw
-	// leaves cannot possibly have links so there is no need to look
-	// at the node.
-	// TODO: These *really* should be Cids, not Links
-	GetLinks(context.Context, *cid.Cid) ([]*Link, error)
-
-	GetOfflineLinkService() LinkService
 }
