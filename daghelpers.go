@@ -21,7 +21,7 @@ func FindLinks(links []*cid.Cid, c *cid.Cid, start int) []int {
 // GetDAG will fill out all of the links of the given Node.
 // It returns a channel of nodes, which the caller can receive
 // all the child nodes of 'root' on, in proper order.
-func GetDAG(ctx context.Context, ds DAGService, root Node) []NodePromise {
+func GetDAG(ctx context.Context, ds DAGService, root Node) []*NodePromise {
 	var cids []*cid.Cid
 	for _, lnk := range root.Links() {
 		cids = append(cids, lnk.Cid)
@@ -32,16 +32,16 @@ func GetDAG(ctx context.Context, ds DAGService, root Node) []NodePromise {
 
 // GetNodes returns an array of 'FutureNode' promises, with each corresponding
 // to the key with the same index as the passed in keys
-func GetNodes(ctx context.Context, ds DAGService, keys []*cid.Cid) []NodePromise {
+func GetNodes(ctx context.Context, ds DAGService, keys []*cid.Cid) []*NodePromise {
 
 	// Early out if no work to do
 	if len(keys) == 0 {
 		return nil
 	}
 
-	promises := make([]NodePromise, len(keys))
+	promises := make([]*NodePromise, len(keys))
 	for i := range keys {
-		promises[i] = newNodePromise(ctx)
+		promises[i] = NewNodePromise(ctx)
 	}
 
 	dedupedKeys := dedupeKeys(keys)

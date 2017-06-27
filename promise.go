@@ -2,87 +2,65 @@ package format
 
 import (
 	"context"
-	"sync"
 )
-
-// TODO: I renamed this to NodePromise because:
-// 1. NodeGetter is a naming conflict.
-// 2. It's a promise...
-
-// TODO: Should this even be an interface? It seems like a simple struct would
-// suffice.
 
 // NodePromise provides a promise like interface for a dag Node
 // the first call to Get will block until the Node is received
 // from its internal channels, subsequent calls will return the
 // cached node.
-type NodePromise interface {
-	Get(context.Context) (Node, error)
-	Fail(err error)
-	Send(Node)
-}
-
-func newNodePromise(ctx context.Context) NodePromise {
-	return &nodePromise{
-		recv: make(chan Node, 1),
+//
+// Thread Safety: This is multiple-consumer/single-producer safe.
+func NewNodePromise(ctx context.Context) *NodePromise {
+	return &NodePromise{
+		done: make(chan struct{}),
 		ctx:  ctx,
-		err:  make(chan error, 1),
 	}
 }
 
-type nodePromise struct {
-	cache Node
-	clk   sync.Mutex
-	recv  chan Node
-	ctx   context.Context
-	err   chan error
+type NodePromise struct {
+	value Node
+	err   error
+	done  chan struct{}
+
+	ctx context.Context
 }
 
-func (np *nodePromise) Fail(err error) {
-	np.clk.Lock()
-	v := np.cache
-	np.clk.Unlock()
-
-	// if promise has a value, don't fail it
-	if v != nil {
+// Call this function to fail a promise.
+//
+// Once a promise has been failed or fulfilled, further attempts to fail it will
+// be silently dropped.
+func (np *NodePromise) Fail(err error) {
+	if np.err != nil || np.value != nil {
+		// Already filled.
 		return
 	}
-
-	np.err <- err
+	np.err = err
+	close(np.done)
 }
 
-func (np *nodePromise) Send(nd Node) {
-	var already bool
-	np.clk.Lock()
-	if np.cache != nil {
-		already = true
+// Fulfill this promise.
+//
+// Once a promise has been fulfilled or failed, calling this function will
+// panic.
+func (np *NodePromise) Send(nd Node) {
+	// if promise has a value, don't fail it
+	if np.err != nil || np.value != nil {
+		panic("already filled")
 	}
-	np.cache = nd
-	np.clk.Unlock()
-
-	if already {
-		panic("sending twice to the same promise is an error!")
-	}
-
-	np.recv <- nd
+	np.value = nd
+	close(np.done)
 }
 
-func (np *nodePromise) Get(ctx context.Context) (Node, error) {
-	np.clk.Lock()
-	c := np.cache
-	np.clk.Unlock()
-	if c != nil {
-		return c, nil
-	}
-
+// Get the value of this promise.
+//
+// This function is safe to call concurrently from any number of goroutines.
+func (np *NodePromise) Get(ctx context.Context) (Node, error) {
 	select {
-	case nd := <-np.recv:
-		return nd, nil
+	case <-np.done:
+		return np.value, np.err
 	case <-np.ctx.Done():
 		return nil, np.ctx.Err()
 	case <-ctx.Done():
 		return nil, ctx.Err()
-	case err := <-np.err:
-		return nil, err
 	}
 }
