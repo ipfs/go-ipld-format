@@ -53,12 +53,14 @@ type DAGService interface {
 	NodeGetter
 
 	Add(Node) (*cid.Cid, error)
+
+	// TODO(ipfs/go-ipfs#4010): Change this to take a CID.
+	// This will require a fair amount of refactoring.
 	Remove(Node) error
 
-	// TODO: This is returning them in-order?? Why not just use []NodePromise?
-	// Maybe add a couple of helpers for getting them in-order and as-available?
-	// GetDAG returns, in order, all the single leve child
-	// nodes of the passed in node.
+	// TODO: Consider using []NodePromise and providing helper functions
+	// that take []NodePromise and return channels that yield nodes both
+	// in-order and as-ready.
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
 
 	AddMany([]Node) ([]*cid.Cid, error)
