@@ -15,10 +15,7 @@ type NodeOption struct {
 	Err  error
 }
 
-// TODO: This name kind of sucks.
-// NodeResolver?
-// NodeService?
-// Just Resolver?
+// The basic Node resolution service.
 type NodeGetter interface {
 	Get(context.Context, *cid.Cid) (Node, error)
 
