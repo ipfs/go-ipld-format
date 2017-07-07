@@ -17,7 +17,7 @@ type BlockDecoder map[uint64]DecodeBlockFunc
 // You SHOULD populate this map from `init` functions in packages that support
 // decoding various IPLD formats. You MUST NOT modify this map once `main` has
 // been called.
-var DefaultBlockDecoder BlockDecoder = map[uint64]DecodeBlockFunc{}
+var DefaultBlockDecoder BlockDecoder = make(map[uint64]DecodeBlockFunc)
 
 func (b BlockDecoder) Decode(block blocks.Block) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
