@@ -10,13 +10,13 @@ import (
 )
 
 func init() {
-	DefaultBlockDecoder[cid.Raw] = func(b blocks.Block) (Node, error) {
+	Register(cid.Raw, func(b blocks.Block) (Node, error) {
 		node := &EmptyNode{}
 		if b.RawData() != nil || !b.Cid().Equals(node.Cid()) {
 			return nil, errors.New("can only decode empty blocks")
 		}
 		return node, nil
-	}
+	})
 }
 
 func TestDecode(t *testing.T) {
