@@ -2,31 +2,46 @@ package format
 
 import (
 	"fmt"
+	"sync"
 
 	blocks "github.com/ipfs/go-block-format"
 )
 
-// DecodeBlock functions decode blocks into nodes.
+// DecodeBlockFunc functions decode blocks into nodes.
 type DecodeBlockFunc func(block blocks.Block) (Node, error)
 
-// Map from codec types to decoder functions
-type BlockDecoder map[uint64]DecodeBlockFunc
+type BlockDecoder interface {
+	Register(codec uint64, decoder DecodeBlockFunc)
+	Decode(blocks.Block) (Node, error)
+}
+type safeBlockDecoder struct {
+	// Can be replaced with an RCU if necessary.
+	lock     sync.RWMutex
+	decoders map[uint64]DecodeBlockFunc
+}
 
-// A default set of block decoders.
+// Register registers decoder for all blocks with the passed codec.
 //
-// You SHOULD populate this map from `init` functions in packages that support
-// decoding various IPLD formats. You MUST NOT modify this map once `main` has
-// been called.
-var DefaultBlockDecoder BlockDecoder = map[uint64]DecodeBlockFunc{}
+// This will silently replace any existing registered block decoders.
+func (d *safeBlockDecoder) Register(codec uint64, decoder DecodeBlockFunc) {
+	d.lock.Lock()
+	defer d.lock.Unlock()
+	d.decoders[codec] = decoder
+}
 
-func (b BlockDecoder) Decode(block blocks.Block) (Node, error) {
+func (d *safeBlockDecoder) Decode(block blocks.Block) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
 	if node, ok := block.(Node); ok {
 		return node, nil
 	}
 
 	ty := block.Cid().Type()
-	if decoder, ok := b[ty]; ok {
+
+	d.lock.RLock()
+	decoder, ok := d.decoders[ty]
+	d.lock.RUnlock()
+
+	if ok {
 		return decoder(block)
 	} else {
 		// TODO: get the *long* name for this format
@@ -34,7 +49,14 @@ func (b BlockDecoder) Decode(block blocks.Block) (Node, error) {
 	}
 }
 
-// Decode the given block using the default block decoder.
+var DefaultBlockDecoder BlockDecoder = &safeBlockDecoder{decoders: make(map[uint64]DecodeBlockFunc)}
+
+// Decode decodes the given block using the default BlockDecoder.
 func Decode(block blocks.Block) (Node, error) {
 	return DefaultBlockDecoder.Decode(block)
+}
+
+// Register registers block decoders with the default BlockDecoder.
+func Register(codec uint64, decoder DecodeBlockFunc) {
+	DefaultBlockDecoder.Register(codec, decoder)
 }
