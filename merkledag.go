@@ -68,9 +68,7 @@ type DAGService interface {
 	// Remove removes a node from this DAG.
 	//
 	// If the node is not in this DAG, Remove returns ErrNotFound.
-	// TODO(ipfs/go-ipfs#4010): Change this to take a CID.
-	// This will require a fair amount of refactoring.
-	Remove(Node) error
+	Remove(*cid.Cid) error
 
 	// GetMany returns a channel of NodeOptions given a set of CIDs.
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
