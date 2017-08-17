@@ -6,6 +6,23 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
+// GetLinks returns the CIDs of the children of the given node. Prefer this
+// method over looking up the node itself and calling `Links()` on it as this
+// method may be able to use a link cache.
+func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
+	if c.Type() == cid.Raw {
+		return nil, nil
+	}
+	if gl, ok := ng.(LinkGetter); ok {
+		return gl.GetLinks(ctx, c)
+	}
+	node, err := ng.Get(ctx, c)
+	if err != nil {
+		return nil, err
+	}
+	return node.Links(), nil
+}
+
 // GetDAG will fill out all of the links of the given Node.
 // It returns an array of NodePromise with the linked nodes all in the proper
 // order.

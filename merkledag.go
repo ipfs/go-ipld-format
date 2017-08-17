@@ -44,23 +44,6 @@ type LinkGetter interface {
 	GetLinks(ctx context.Context, nd *cid.Cid) ([]*Link, error)
 }
 
-// GetLinks returns the CIDs of the children of the given node. Prefer this
-// method over looking up the node itself and calling `Links()` on it as this
-// method may be able to use a link cache.
-func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
-	if c.Type() == cid.Raw {
-		return nil, nil
-	}
-	if gl, ok := ng.(LinkGetter); ok {
-		return gl.GetLinks(ctx, c)
-	}
-	node, err := ng.Get(ctx, c)
-	if err != nil {
-		return nil, err
-	}
-	return node.Links(), nil
-}
-
 // DAGService is an IPFS Merkle DAG service.
 type DAGService interface {
 	NodeGetter
