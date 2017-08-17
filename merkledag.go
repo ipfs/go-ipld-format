@@ -17,9 +17,15 @@ type NodeOption struct {
 
 // The basic Node resolution service.
 type NodeGetter interface {
+	// Get retrieves nodes by CID. Depending on the NodeGetter
+	// implementation, this may involve fetching the Node from a remote
+	// machine; consider setting a deadline in the context.
 	Get(context.Context, *cid.Cid) (Node, error)
 
 	// TODO(ipfs/go-ipfs#4009): Remove this method after fixing.
+
+	// OfflineNodeGetter returns an version of this NodeGetter that will
+	// make no network requests.
 	OfflineNodeGetter() NodeGetter
 }
 
@@ -27,10 +33,17 @@ type NodeGetter interface {
 // objects faster.
 type LinkGetter interface {
 	NodeGetter
+
 	// TODO(ipfs/go-ipld-format#9): This should return []*cid.Cid
+
+	// GetLinks returns the children of the node refered to by the given
+	// CID.
 	GetLinks(ctx context.Context, nd *cid.Cid) ([]*Link, error)
 }
 
+// GetLinks returns the CIDs of the children of the given node. Prefer this
+// method over looking up the node itself and calling `Links()` on it as this
+// method may be able to use a link cache.
 func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
 	if c.Type() == cid.Raw {
 		return nil, nil
@@ -49,16 +62,22 @@ func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
 type DAGService interface {
 	NodeGetter
 
+	// Add adds a node to this DAG.
 	Add(Node) (*cid.Cid, error)
 
+	// Remove removes a node from this DAG.
+	//
+	// If the node is not in this DAG, Remove returns ErrNotFound.
 	// TODO(ipfs/go-ipfs#4010): Change this to take a CID.
 	// This will require a fair amount of refactoring.
 	Remove(Node) error
 
-	// TODO: Consider using []NodePromise and providing helper functions
-	// that take []NodePromise and return channels that yield nodes both
-	// in-order and as-ready.
+	// GetMany returns a channel of NodeOptions given a set of CIDs.
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
 
+	// AddMany adds many nodes to this DAG.
+	//
+	// Consider using NewBatch instead of calling this directly if you need
+	// to add an unbounded number of nodes to avoid buffering too much.
 	AddMany([]Node) ([]*cid.Cid, error)
 }

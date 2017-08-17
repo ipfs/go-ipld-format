@@ -7,8 +7,8 @@ import (
 )
 
 // GetDAG will fill out all of the links of the given Node.
-// It returns a channel of nodes, which the caller can receive
-// all the child nodes of 'root' on, in proper order.
+// It returns an array of NodePromise with the linked nodes all in the proper
+// order.
 func GetDAG(ctx context.Context, ds DAGService, root Node) []*NodePromise {
 	var cids []*cid.Cid
 	for _, lnk := range root.Links() {

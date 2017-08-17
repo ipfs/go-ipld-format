@@ -4,7 +4,10 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
-func Batching(ds DAGService) *Batch {
+// NewBatch returns a node buffer (Batch) that buffers nodes internally and
+// commits them to the underlying DAGService in batches. Use this if you intend
+// to add a lot of nodes all at once.
+func NewBatch(ds DAGService) *Batch {
 	return &Batch{
 		ds:      ds,
 		MaxSize: 8 << 20,
@@ -26,6 +29,8 @@ type Batch struct {
 	MaxBlocks int
 }
 
+// Add a node to this batch of nodes, potentially committing the set of batched
+// nodes to the underlying DAGService.
 func (t *Batch) Add(nd Node) (*cid.Cid, error) {
 	t.nodes = append(t.nodes, nd)
 	t.size += len(nd.RawData())
@@ -35,6 +40,9 @@ func (t *Batch) Add(nd Node) (*cid.Cid, error) {
 	return nd.Cid(), nil
 }
 
+// Commit commits the buffered of nodes to the underlying DAGService.
+// Make sure to call this after you're done adding nodes to the batch to ensure
+// that they're actually added to the DAGService.
 func (t *Batch) Commit() error {
 	_, err := t.ds.AddMany(t.nodes)
 	t.nodes = nil
