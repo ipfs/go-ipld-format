@@ -22,6 +22,9 @@ type NodeGetter interface {
 	// machine; consider setting a deadline in the context.
 	Get(context.Context, *cid.Cid) (Node, error)
 
+	// GetMany returns a channel of NodeOptions given a set of CIDs.
+	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
+
 	// TODO(ipfs/go-ipfs#4009): Remove this method after fixing.
 
 	// OfflineNodeGetter returns an version of this NodeGetter that will
@@ -69,9 +72,6 @@ type DAGService interface {
 	//
 	// If the node is not in this DAG, Remove returns ErrNotFound.
 	Remove(*cid.Cid) error
-
-	// GetMany returns a channel of NodeOptions given a set of CIDs.
-	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
 
 	// AddMany adds many nodes to this DAG.
 	//
