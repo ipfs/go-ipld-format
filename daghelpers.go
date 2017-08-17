@@ -9,7 +9,7 @@ import (
 // GetDAG will fill out all of the links of the given Node.
 // It returns an array of NodePromise with the linked nodes all in the proper
 // order.
-func GetDAG(ctx context.Context, ds DAGService, root Node) []*NodePromise {
+func GetDAG(ctx context.Context, ds NodeGetter, root Node) []*NodePromise {
 	var cids []*cid.Cid
 	for _, lnk := range root.Links() {
 		cids = append(cids, lnk.Cid)
@@ -20,7 +20,7 @@ func GetDAG(ctx context.Context, ds DAGService, root Node) []*NodePromise {
 
 // GetNodes returns an array of 'FutureNode' promises, with each corresponding
 // to the key with the same index as the passed in keys
-func GetNodes(ctx context.Context, ds DAGService, keys []*cid.Cid) []*NodePromise {
+func GetNodes(ctx context.Context, ds NodeGetter, keys []*cid.Cid) []*NodePromise {
 
 	// Early out if no work to do
 	if len(keys) == 0 {
