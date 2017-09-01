@@ -24,12 +24,6 @@ type NodeGetter interface {
 
 	// GetMany returns a channel of NodeOptions given a set of CIDs.
 	GetMany(context.Context, []*cid.Cid) <-chan *NodeOption
-
-	// TODO(ipfs/go-ipfs#4009): Remove this method after fixing.
-
-	// OfflineNodeGetter returns an version of this NodeGetter that will
-	// make no network requests.
-	OfflineNodeGetter() NodeGetter
 }
 
 // NodeGetters can optionally implement this interface to make finding linked
