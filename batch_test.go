@@ -64,11 +64,7 @@ func (d *testDag) AddMany(nodes []Node) ([]*cid.Cid, error) {
 func (d *testDag) Remove(c *cid.Cid) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	key := c.KeyString()
-	if _, exists := d.nodes[key]; !exists {
-		return ErrNotFound
-	}
-	delete(d.nodes, key)
+	delete(d.nodes, c.KeyString())
 	return nil
 }
 

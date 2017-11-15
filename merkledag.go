@@ -47,7 +47,7 @@ type DAGService interface {
 
 	// Remove removes a node from this DAG.
 	//
-	// If the node is not in this DAG, Remove returns ErrNotFound.
+	// Remove returns no error if the requested node is not present in this DAG.
 	Remove(*cid.Cid) error
 
 	// AddMany adds many nodes to this DAG.
