@@ -76,13 +76,16 @@ func (d *testDag) RemoveMany(ctx context.Context, cids []*cid.Cid) error {
 var _ DAGService = new(testDag)
 
 func TestBatch(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	d := newTestDag()
-	b := NewBatch(d)
+	b := NewBatch(ctx, d)
 	for i := 0; i < 1000; i++ {
 		// It would be great if we could use *many* different nodes here
 		// but we can't add any dependencies and I don't feel like adding
 		// any more testing code.
-		if _, err := b.Add(new(EmptyNode)); err != nil {
+		if err := b.Add(new(EmptyNode)); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -90,7 +93,7 @@ func TestBatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	n, err := d.Get(context.Background(), new(EmptyNode).Cid())
+	n, err := d.Get(ctx, new(EmptyNode).Cid())
 	if err != nil {
 		t.Fatal(err)
 	}
