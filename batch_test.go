@@ -64,6 +64,15 @@ func (d *testDag) Remove(c *cid.Cid) error {
 	return nil
 }
 
+func (d *testDag) RemoveMany(cids []*cid.Cid) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	for _, c := range cids {
+		delete(d.nodes, c.KeyString())
+	}
+	return nil
+}
+
 var _ DAGService = new(testDag)
 
 func TestBatch(t *testing.T) {

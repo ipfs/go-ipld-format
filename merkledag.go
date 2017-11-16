@@ -55,4 +55,9 @@ type DAGService interface {
 	// Consider using NewBatch instead of calling this directly if you need
 	// to add an unbounded number of nodes to avoid buffering too much.
 	AddMany([]Node) error
+
+	// RemoveMany removes many nodes from this DAG.
+	//
+	// It returns success even if the nodes were not present in the DAG.
+	RemoveMany([]*cid.Cid) error
 }
