@@ -41,24 +41,20 @@ func (d *testDag) GetMany(ctx context.Context, cids []*cid.Cid) <-chan *NodeOpti
 	return out
 }
 
-func (d *testDag) Add(node Node) (*cid.Cid, error) {
+func (d *testDag) Add(node Node) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	c := node.Cid()
-	d.nodes[c.KeyString()] = node
-	return c, nil
+	d.nodes[node.Cid().KeyString()] = node
+	return nil
 }
 
-func (d *testDag) AddMany(nodes []Node) ([]*cid.Cid, error) {
+func (d *testDag) AddMany(nodes []Node) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	cids := make([]*cid.Cid, len(nodes))
-	for i, n := range nodes {
-		c := n.Cid()
-		d.nodes[c.KeyString()] = n
-		cids[i] = c
+	for _, n := range nodes {
+		d.nodes[n.Cid().KeyString()] = n
 	}
-	return cids, nil
+	return nil
 }
 
 func (d *testDag) Remove(c *cid.Cid) error {

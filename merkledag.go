@@ -43,7 +43,7 @@ type DAGService interface {
 	NodeGetter
 
 	// Add adds a node to this DAG.
-	Add(Node) (*cid.Cid, error)
+	Add(Node) error
 
 	// Remove removes a node from this DAG.
 	//
@@ -54,5 +54,5 @@ type DAGService interface {
 	//
 	// Consider using NewBatch instead of calling this directly if you need
 	// to add an unbounded number of nodes to avoid buffering too much.
-	AddMany([]Node) ([]*cid.Cid, error)
+	AddMany([]Node) error
 }

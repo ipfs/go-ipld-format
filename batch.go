@@ -71,7 +71,7 @@ func (t *Batch) asyncCommit() {
 		}
 	}
 	go func(b []Node) {
-		_, err := t.ds.AddMany(b)
+		err := t.ds.AddMany(b)
 		t.commitResults <- err
 	}(t.nodes)
 
