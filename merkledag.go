@@ -43,21 +43,21 @@ type DAGService interface {
 	NodeGetter
 
 	// Add adds a node to this DAG.
-	Add(Node) error
+	Add(context.Context, Node) error
 
 	// Remove removes a node from this DAG.
 	//
 	// Remove returns no error if the requested node is not present in this DAG.
-	Remove(*cid.Cid) error
+	Remove(context.Context, *cid.Cid) error
 
 	// AddMany adds many nodes to this DAG.
 	//
 	// Consider using NewBatch instead of calling this directly if you need
 	// to add an unbounded number of nodes to avoid buffering too much.
-	AddMany([]Node) error
+	AddMany(context.Context, []Node) error
 
 	// RemoveMany removes many nodes from this DAG.
 	//
 	// It returns success even if the nodes were not present in the DAG.
-	RemoveMany([]*cid.Cid) error
+	RemoveMany(context.Context, []*cid.Cid) error
 }

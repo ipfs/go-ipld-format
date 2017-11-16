@@ -41,14 +41,14 @@ func (d *testDag) GetMany(ctx context.Context, cids []*cid.Cid) <-chan *NodeOpti
 	return out
 }
 
-func (d *testDag) Add(node Node) error {
+func (d *testDag) Add(ctx context.Context, node Node) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.nodes[node.Cid().KeyString()] = node
 	return nil
 }
 
-func (d *testDag) AddMany(nodes []Node) error {
+func (d *testDag) AddMany(ctx context.Context, nodes []Node) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	for _, n := range nodes {
@@ -57,14 +57,14 @@ func (d *testDag) AddMany(nodes []Node) error {
 	return nil
 }
 
-func (d *testDag) Remove(c *cid.Cid) error {
+func (d *testDag) Remove(ctx context.Context, c *cid.Cid) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	delete(d.nodes, c.KeyString())
 	return nil
 }
 
-func (d *testDag) RemoveMany(cids []*cid.Cid) error {
+func (d *testDag) RemoveMany(ctx context.Context, cids []*cid.Cid) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	for _, c := range cids {

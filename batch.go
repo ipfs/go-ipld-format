@@ -1,6 +1,7 @@
 package format
 
 import (
+	"context"
 	"runtime"
 
 	cid "github.com/ipfs/go-cid"
@@ -71,7 +72,7 @@ func (t *Batch) asyncCommit() {
 		}
 	}
 	go func(b []Node) {
-		err := t.ds.AddMany(b)
+		err := t.ds.AddMany(context.Background(), b)
 		t.commitResults <- err
 	}(t.nodes)
 
