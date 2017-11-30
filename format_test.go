@@ -113,7 +113,7 @@ func TestLinkGetNode(t *testing.T) {
 	}
 
 	if !got.Cid().Equals(n.Cid()) {
-		t.Errorf("cid not equal. expected: %s, got: %S", n.Cid(), got.Cid())
+		t.Errorf("cid not equal. expected: %s, got: %s", n.Cid(), got.Cid())
 		return
 	}
 }
