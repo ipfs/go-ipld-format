@@ -10,6 +10,7 @@ import (
 // DecodeBlockFunc functions decode blocks into nodes.
 type DecodeBlockFunc func(block blocks.Block) (Node, error)
 
+// BlockDecoder is the interface for decoding blocks into nodes
 type BlockDecoder interface {
 	Register(codec uint64, decoder DecodeBlockFunc)
 	Decode(blocks.Block) (Node, error)
@@ -43,12 +44,13 @@ func (d *safeBlockDecoder) Decode(block blocks.Block) (Node, error) {
 
 	if ok {
 		return decoder(block)
-	} else {
-		// TODO: get the *long* name for this format
-		return nil, fmt.Errorf("unrecognized object type: %d", ty)
 	}
+
+	// TODO: get the *long* name for this format
+	return nil, fmt.Errorf("unrecognized object type: %d", ty)
 }
 
+// DefaultBlockDecoder is a safeBlockDecoder with no decoders registered
 var DefaultBlockDecoder BlockDecoder = &safeBlockDecoder{decoders: make(map[uint64]DecodeBlockFunc)}
 
 // Decode decodes the given block using the default BlockDecoder.

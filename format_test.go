@@ -1,7 +1,9 @@
 package format
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	cid "github.com/ipfs/go-cid"
@@ -10,10 +12,10 @@ import (
 
 type EmptyNode struct{}
 
-var EmptyNodeError error = errors.New("dummy node")
+var ErrEmptyNode = errors.New("dummy node")
 
 func (n *EmptyNode) Resolve([]string) (interface{}, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *EmptyNode) Tree(string, int) []string {
@@ -21,7 +23,7 @@ func (n *EmptyNode) Tree(string, int) []string {
 }
 
 func (n *EmptyNode) ResolveLink([]string) (*Link, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *EmptyNode) Copy() Node {
@@ -69,4 +71,58 @@ func (n *EmptyNode) Stat() (*NodeStat, error) {
 func TestNodeType(t *testing.T) {
 	// Type assertion.
 	var _ Node = &EmptyNode{}
+}
+
+func TestMakeLink(t *testing.T) {
+	n := &EmptyNode{}
+	l, err := MakeLink(n)
+	if err != nil {
+		t.Errorf("unexpected error: %s", err.Error())
+		return
+	}
+	expect := "z2yYDV"
+	got := l.Cid.String()
+	if expect != got {
+		t.Errorf("cid mismatch. expected: '%s', got '%s'", expect, got)
+	}
+}
+
+type SliceServ []Node
+
+func (s SliceServ) Get(ctx context.Context, id *cid.Cid) (Node, error) {
+	for _, n := range s {
+		if n.Cid().Equals(id) {
+			return n, nil
+		}
+	}
+	return nil, fmt.Errorf("not found")
+}
+
+func TestLinkGetNode(t *testing.T) {
+	n := &EmptyNode{}
+	l, err := MakeLink(n)
+	if err != nil {
+		t.Errorf("unexpected error: %s", err.Error())
+		return
+	}
+
+	got, err := l.GetNode(context.Background(), SliceServ{n})
+	if err != nil {
+		t.Errorf("unexpected error: %s", err.Error())
+		return
+	}
+
+	if !got.Cid().Equals(n.Cid()) {
+		t.Errorf("cid not equal. expected: %s, got: %S", n.Cid(), got.Cid())
+		return
+	}
+}
+
+func TestNodeStatString(t *testing.T) {
+	ns := NodeStat{Hash: "foo", NumLinks: 1, BlockSize: 2, LinksSize: 3, DataSize: 4, CumulativeSize: 5}
+	expect := "NodeStat{NumLinks: 1, BlockSize: 2, LinksSize: 3, DataSize: 4, CumulativeSize: 5}"
+	got := ns.String()
+	if expect != got {
+		t.Errorf("string mismatch. expected: '%s'. got: '%s'", expect, got)
+	}
 }

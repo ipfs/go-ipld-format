@@ -9,6 +9,7 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
+// Resolver is the interface that details paths a node contains
 type Resolver interface {
 	// Resolve resolves a path through this node, stopping at any link boundary
 	// and returning the object found as well as the remaining path to traverse
@@ -19,6 +20,7 @@ type Resolver interface {
 	Tree(path string, depth int) []string
 }
 
+// Node is an object in a Merkle DAG graph
 type Node interface {
 	blocks.Block
 	Resolver
@@ -40,7 +42,9 @@ type Node interface {
 	Size() (uint64, error)
 }
 
+// NodeGetter is the interface that wraps the basic get method
 type NodeGetter interface {
+	// Get a node for a given cid
 	Get(context.Context, *cid.Cid) (Node, error)
 }
 
@@ -56,6 +60,11 @@ type Link struct {
 	Cid *cid.Cid
 }
 
+// GetNode returns the MDAG Node that this link points to
+func (l *Link) GetNode(ctx context.Context, serv NodeGetter) (Node, error) {
+	return serv.Get(ctx, l.Cid)
+}
+
 // NodeStat is a statistics object for a Node. Mostly sizes.
 type NodeStat struct {
 	Hash           string
@@ -66,6 +75,7 @@ type NodeStat struct {
 	CumulativeSize int // cumulative size of object and its references
 }
 
+// String implements the stringer interface for NodeStat
 func (ns NodeStat) String() string {
 	f := "NodeStat{NumLinks: %d, BlockSize: %d, LinksSize: %d, DataSize: %d, CumulativeSize: %d}"
 	return fmt.Sprintf(f, ns.NumLinks, ns.BlockSize, ns.LinksSize, ns.DataSize, ns.CumulativeSize)
@@ -82,9 +92,4 @@ func MakeLink(n Node) (*Link, error) {
 		Size: s,
 		Cid:  n.Cid(),
 	}, nil
-}
-
-// GetNode returns the MDAG Node that this link points to
-func (l *Link) GetNode(ctx context.Context, serv NodeGetter) (Node, error) {
-	return serv.Get(ctx, l.Cid)
 }
