@@ -38,6 +38,7 @@ func (d *testDag) GetMany(ctx context.Context, cids []*cid.Cid) <-chan *NodeOpti
 			out <- &NodeOption{Err: ErrNotFound}
 		}
 	}
+	close(out)
 	return out
 }
 
