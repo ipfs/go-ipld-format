@@ -2,12 +2,9 @@ package format
 
 import (
 	"context"
-	"fmt"
 
 	cid "github.com/ipfs/go-cid"
 )
-
-var ErrNotFound = fmt.Errorf("merkledag: not found")
 
 // Either a node or an error.
 type NodeOption struct {

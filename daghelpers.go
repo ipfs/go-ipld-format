@@ -61,7 +61,7 @@ func GetNodes(ctx context.Context, ds NodeGetter, keys []*cid.Cid) []*NodePromis
 			case opt, ok := <-nodechan:
 				if !ok {
 					for _, p := range promises {
-						p.Fail(ErrNotFound)
+						p.Fail(ErrNotFound{})
 					}
 					return
 				}
