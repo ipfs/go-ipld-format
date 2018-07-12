@@ -54,12 +54,16 @@ func (np *NodePromise) Send(nd Node) {
 }
 
 // Poll returns the result of the promise if ready but doesn't block.
+//
+// Returns nil, nil if not ready.
 func (np *NodePromise) Poll() (Node, error) {
 	select {
 	case <-np.done:
 		return np.value, np.err
 	case <-np.ctx.Done():
 		return nil, np.ctx.Err()
+	default:
+		return nil, nil
 	}
 }
 
