@@ -89,6 +89,26 @@ func GetNodes(ctx context.Context, ds NodeGetter, keys []*cid.Cid) []*NodePromis
 	return promises
 }
 
+func Copy(ctx context.Context, from, to DAGService, root *cid.Cid) error {
+	node, err := from.Get(ctx, root)
+	if err != nil {
+		return err
+	}
+	links := node.Links()
+	if len(links) == 0 {
+		n := node.Copy()
+		to.Add(ctx, n)
+		return nil
+	}
+	for _, link := range links {
+		err := Copy(ctx, from, to, link.Cid)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Remove duplicates from a list of keys
 func dedupeKeys(cids []*cid.Cid) []*cid.Cid {
 	set := cid.NewSet()
