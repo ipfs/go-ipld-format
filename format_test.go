@@ -28,7 +28,7 @@ func (n *EmptyNode) Copy() Node {
 	return &EmptyNode{}
 }
 
-func (n *EmptyNode) Cid() *cid.Cid {
+func (n *EmptyNode) Cid() cid.Cid {
 	id, err := cid.Prefix{
 		Version:  1,
 		Codec:    cid.Raw,

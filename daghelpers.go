@@ -9,7 +9,7 @@ import (
 // GetLinks returns the CIDs of the children of the given node. Prefer this
 // method over looking up the node itself and calling `Links()` on it as this
 // method may be able to use a link cache.
-func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
+func GetLinks(ctx context.Context, ng NodeGetter, c cid.Cid) ([]*Link, error) {
 	if c.Type() == cid.Raw {
 		return nil, nil
 	}
@@ -27,7 +27,7 @@ func GetLinks(ctx context.Context, ng NodeGetter, c *cid.Cid) ([]*Link, error) {
 // It returns an array of NodePromise with the linked nodes all in the proper
 // order.
 func GetDAG(ctx context.Context, ds NodeGetter, root Node) []*NodePromise {
-	var cids []*cid.Cid
+	var cids []cid.Cid
 	for _, lnk := range root.Links() {
 		cids = append(cids, lnk.Cid)
 	}
@@ -37,7 +37,7 @@ func GetDAG(ctx context.Context, ds NodeGetter, root Node) []*NodePromise {
 
 // GetNodes returns an array of 'FutureNode' promises, with each corresponding
 // to the key with the same index as the passed in keys
-func GetNodes(ctx context.Context, ds NodeGetter, keys []*cid.Cid) []*NodePromise {
+func GetNodes(ctx context.Context, ds NodeGetter, keys []cid.Cid) []*NodePromise {
 
 	// Early out if no work to do
 	if len(keys) == 0 {
@@ -89,7 +89,7 @@ func GetNodes(ctx context.Context, ds NodeGetter, keys []*cid.Cid) []*NodePromis
 	return promises
 }
 
-func Copy(ctx context.Context, from, to DAGService, root *cid.Cid) error {
+func Copy(ctx context.Context, from, to DAGService, root cid.Cid) error {
 	node, err := from.Get(ctx, root)
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func Copy(ctx context.Context, from, to DAGService, root *cid.Cid) error {
 }
 
 // Remove duplicates from a list of keys
-func dedupeKeys(cids []*cid.Cid) []*cid.Cid {
+func dedupeKeys(cids []cid.Cid) []cid.Cid {
 	set := cid.NewSet()
 	for _, c := range cids {
 		set.Add(c)

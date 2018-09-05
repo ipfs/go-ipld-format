@@ -43,10 +43,10 @@ func (n *TestNode) Copy() Node {
 	return &EmptyNode{}
 }
 
-func (n *TestNode) Cid() *cid.Cid {
+func (n *TestNode) Cid() cid.Cid {
 	c, err := n.builder.Sum(n.RawData())
 	if err != nil {
-		return nil
+		return cid.Cid{}
 	}
 	return c
 }

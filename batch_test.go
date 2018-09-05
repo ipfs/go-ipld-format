@@ -18,7 +18,7 @@ func newTestDag() *testDag {
 	return &testDag{nodes: make(map[string]Node)}
 }
 
-func (d *testDag) Get(ctx context.Context, cid *cid.Cid) (Node, error) {
+func (d *testDag) Get(ctx context.Context, cid cid.Cid) (Node, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if n, ok := d.nodes[cid.KeyString()]; ok {
@@ -27,7 +27,7 @@ func (d *testDag) Get(ctx context.Context, cid *cid.Cid) (Node, error) {
 	return nil, ErrNotFound
 }
 
-func (d *testDag) GetMany(ctx context.Context, cids []*cid.Cid) <-chan *NodeOption {
+func (d *testDag) GetMany(ctx context.Context, cids []cid.Cid) <-chan *NodeOption {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	out := make(chan *NodeOption, len(cids))
@@ -58,14 +58,14 @@ func (d *testDag) AddMany(ctx context.Context, nodes []Node) error {
 	return nil
 }
 
-func (d *testDag) Remove(ctx context.Context, c *cid.Cid) error {
+func (d *testDag) Remove(ctx context.Context, c cid.Cid) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	delete(d.nodes, c.KeyString())
 	return nil
 }
 
-func (d *testDag) RemoveMany(ctx context.Context, cids []*cid.Cid) error {
+func (d *testDag) RemoveMany(ctx context.Context, cids []cid.Cid) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	for _, c := range cids {

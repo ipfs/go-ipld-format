@@ -53,7 +53,7 @@ type Link struct {
 	Size uint64
 
 	// multihash of the target object
-	Cid *cid.Cid
+	Cid cid.Cid
 }
 
 // NodeStat is a statistics object for a Node. Mostly sizes.
