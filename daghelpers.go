@@ -95,22 +95,15 @@ func Copy(ctx context.Context, from, to DAGService, root *cid.Cid) error {
 		return err
 	}
 	links := node.Links()
-	if len(links) == 0 {
-		err := to.Add(ctx, node)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
 	for _, link := range links {
 		err := Copy(ctx, from, to, link.Cid)
 		if err != nil {
 			return err
 		}
-		err = to.Add(ctx, node)
-		if err != nil {
-			return err
-		}
+	}
+	err = to.Add(ctx, node)
+	if err != nil {
+		return err
 	}
 	return nil
 }

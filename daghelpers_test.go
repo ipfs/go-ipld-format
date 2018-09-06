@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/ipfs/go-cid"
 	mh "github.com/multiformats/go-multihash"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -132,13 +131,11 @@ func TestCopy(t *testing.T) {
 	}
 
 	r, err := to.Get(ctx, root.Cid())
-	if err != nil {
-		t.Error(err)
+	if err != nil || len(r.Links()) != 2 {
+		t.Error("fail to copy dag")
 	}
 	l1, err := to.Get(ctx, l11.Cid())
-	if err != nil {
-		t.Error(err)
+	if err != nil || len(l1.Links()) != 3 {
+		t.Error("fail to copy dag")
 	}
-	assert.Equal(t, len(r.Links()), 2)
-	assert.Equal(t, len(l1.Links()), 3)
 }
