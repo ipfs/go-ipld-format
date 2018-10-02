@@ -108,3 +108,19 @@ func TestBatch(t *testing.T) {
 		t.Fatal("should have one node")
 	}
 }
+
+func TestBatchOptions(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	wantMaxSize := 8 << 10
+	wantMaxNodes := 500
+	d := newTestDag()
+	b := NewBatch(ctx, d, MaxSizeBatchOption(wantMaxSize), MaxNodesBatchOption(wantMaxNodes))
+	if b.opts.maxSize != wantMaxSize {
+		t.Fatalf("maxSize incorrect, want: %d, got: %d", wantMaxSize, b.opts.maxSize)
+	}
+	if b.opts.maxNodes != wantMaxNodes {
+		t.Fatalf("maxNodes incorrect, want: %d, got: %d", wantMaxNodes, b.opts.maxNodes)
+	}
+}
