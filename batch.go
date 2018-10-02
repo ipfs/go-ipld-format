@@ -203,7 +203,7 @@ func MaxSizeBatchOption(size int) BatchOption {
 }
 
 // MaxNodesBatchOption sets the maximum number of nodes in a Batch.
-func MaxNodesBatchOption(num int) func(o *batchOptions) {
+func MaxNodesBatchOption(num int) BatchOption {
 	return func(o *batchOptions) {
 		o.maxNodes = num
 	}
