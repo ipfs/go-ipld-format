@@ -109,6 +109,26 @@ func TestBatch(t *testing.T) {
 	}
 }
 
+func TestBufferedDAG(t *testing.T) {
+	ds := newTestDag()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var bdag DAGService = NewBufferedDAG(ctx, ds)
+
+	for i := 0; i < 1000; i++ {
+		n := new(EmptyNode)
+		if err := bdag.Add(ctx, n); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := bdag.Get(ctx, n.Cid()); err != nil {
+			t.Fatal(err)
+		}
+		if err := bdag.Remove(ctx, n.Cid()); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
 func TestBatchOptions(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
