@@ -86,7 +86,7 @@ func TestBatch(t *testing.T) {
 		// It would be great if we could use *many* different nodes here
 		// but we can't add any dependencies and I don't feel like adding
 		// any more testing code.
-		if err := b.Add(new(EmptyNode)); err != nil {
+		if err := b.Add(ctx, new(EmptyNode)); err != nil {
 			t.Fatal(err)
 		}
 	}

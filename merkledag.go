@@ -26,6 +26,18 @@ type NodeGetter interface {
 	GetMany(context.Context, []cid.Cid) <-chan *NodeOption
 }
 
+// NodeAdder adds nodes to a DAG.
+type NodeAdder interface {
+	// Add adds a node to this DAG.
+	Add(context.Context, Node) error
+
+	// AddMany adds many nodes to this DAG.
+	//
+	// Consider using the Batch NodeAdder (`NewBatch`) if you make
+	// extensive use of this function.
+	AddMany(context.Context, []Node) error
+}
+
 // NodeGetters can optionally implement this interface to make finding linked
 // objects faster.
 type LinkGetter interface {
@@ -41,20 +53,12 @@ type LinkGetter interface {
 // DAGService is an IPFS Merkle DAG service.
 type DAGService interface {
 	NodeGetter
-
-	// Add adds a node to this DAG.
-	Add(context.Context, Node) error
+	NodeAdder
 
 	// Remove removes a node from this DAG.
 	//
 	// Remove returns no error if the requested node is not present in this DAG.
 	Remove(context.Context, cid.Cid) error
-
-	// AddMany adds many nodes to this DAG.
-	//
-	// Consider using NewBatch instead of calling this directly if you need
-	// to add an unbounded number of nodes to avoid buffering too much.
-	AddMany(context.Context, []Node) error
 
 	// RemoveMany removes many nodes from this DAG.
 	//

@@ -104,7 +104,13 @@ func (t *Batch) asyncCommit() {
 }
 
 // Add adds a node to the batch and commits the batch if necessary.
-func (t *Batch) Add(nd Node) error {
+func (t *Batch) Add(ctx context.Context, nd Node) error {
+	return t.AddMany(ctx, []Node{nd})
+}
+
+// Add many calls Add for every given Node, thus batching and
+// commiting them as needed.
+func (t *Batch) AddMany(ctx context.Context, nodes []Node) error {
 	if t.err != nil {
 		return t.err
 	}
@@ -115,8 +121,10 @@ func (t *Batch) Add(nd Node) error {
 		return t.err
 	}
 
-	t.nodes = append(t.nodes, nd)
-	t.size += len(nd.RawData())
+	t.nodes = append(t.nodes, nodes...)
+	for _, nd := range nodes {
+		t.size += len(nd.RawData())
+	}
 
 	if t.size > t.opts.maxSize || len(t.nodes) > t.opts.maxNodes {
 		t.asyncCommit()
