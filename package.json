@@ -9,15 +9,15 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmR8BauakNcBa3RbE4nbQu76PDiJgoQgz8AJdhJuiU4TAw",
+      "hash": "QmTbxNB1NwDesLmKTscr4udL2tVP7MaxvXnD1D9yX7g3PN",
       "name": "go-cid",
-      "version": "0.9.1"
+      "version": "0.9.3"
     },
     {
       "author": "stebalien",
-      "hash": "QmWoXtvgC8inqFkAATB7cp2Dax7XBi9VDvSg9RCCZufmRk",
+      "hash": "QmYYLnAzR28nAQ4U5MFniLprnktu6eTFKibeNt96V21EZK",
       "name": "go-block-format",
-      "version": "0.2.1"
+      "version": "0.2.2"
     },
     {
       "author": "multiformats",
@@ -31,6 +31,6 @@
   "license": "",
   "name": "go-ipld-format",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.8.0"
+  "version": "0.8.1"
 }
 
