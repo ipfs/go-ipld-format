@@ -9,6 +9,9 @@ go-ipld-format
 
 > go-ipld-format is a set of interfaces that a type needs to implement in order to be a part of the ipld merkle-forest.
 
+## Lead Maintainer
+
+[Eric Myhre](https://github.com/warpfork)
 
 ## Table of Contents
 
