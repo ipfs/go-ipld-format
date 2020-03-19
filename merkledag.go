@@ -7,7 +7,37 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
-var ErrNotFound = fmt.Errorf("merkledag: not found")
+// ErrNotFound is used to signal when a Node could not be found. The specific
+// meaning will depend on the DAGService implementation, which may be trying
+// to read nodes locally but also, trying to find them remotely.
+var ErrNotFound = ErrNotFoundCid{}
+
+// ErrNotFoundCid can be use to provide specific CID information in a NotFound
+// error.
+type ErrNotFoundCid struct {
+	c cid.Cid
+}
+
+// Error implements the error interface and returns a human-readable
+// message for this error.
+func (e ErrNotFoundCid) Error() string {
+	if e.c == cid.Undef {
+		return "ipld: node not found"
+	}
+
+	return fmt.Sprintf("ipld: %s not found", e.c)
+}
+
+// Is allows to check whether any error is of this ErrNotFoundCid type.
+// Do not use this directly, but rather errors.Is(yourError, ErrNotFound).
+func (e ErrNotFoundCid) Is(err error) bool {
+	switch err.(type) {
+	case ErrNotFoundCid:
+		return true
+	default:
+		return false
+	}
+}
 
 // Either a node or an error.
 type NodeOption struct {
