@@ -2,6 +2,7 @@ package format
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	cid "github.com/ipfs/go-cid"
@@ -39,6 +40,12 @@ func (e ErrNotFound) Is(err error) bool {
 
 func (e ErrNotFound) NotFound() bool {
 	return true
+}
+
+// IsNotFound returns if the given error is or wraps an ErrNotFound
+// (equivalent to errors.Is(err, ErrNotFound{}))
+func IsNotFound(err error) bool {
+	return errors.Is(err, ErrNotFound{})
 }
 
 // Either a node or an error.
