@@ -10,33 +10,35 @@ import (
 // ErrNotFound is used to signal when a Node could not be found. The specific
 // meaning will depend on the DAGService implementation, which may be trying
 // to read nodes locally but also, trying to find them remotely.
-var ErrNotFound = ErrNotFoundCid{}
-
-// ErrNotFoundCid can be use to provide specific CID information in a NotFound
-// error.
-type ErrNotFoundCid struct {
-	c cid.Cid
+//
+// The Cid field can be filled in to provide additional context.
+type ErrNotFound struct {
+	Cid cid.Cid
 }
 
 // Error implements the error interface and returns a human-readable
 // message for this error.
-func (e ErrNotFoundCid) Error() string {
-	if e.c == cid.Undef {
+func (e ErrNotFound) Error() string {
+	if e.Cid == cid.Undef {
 		return "ipld: node not found"
 	}
 
-	return fmt.Sprintf("ipld: %s not found", e.c)
+	return fmt.Sprintf("ipld: %s not found", e.Cid)
 }
 
-// Is allows to check whether any error is of this ErrNotFoundCid type.
+// Is allows to check whether any error is of this ErrNotFound type.
 // Do not use this directly, but rather errors.Is(yourError, ErrNotFound).
-func (e ErrNotFoundCid) Is(err error) bool {
+func (e ErrNotFound) Is(err error) bool {
 	switch err.(type) {
-	case ErrNotFoundCid:
+	case ErrNotFound:
 		return true
 	default:
 		return false
 	}
+}
+
+func (e ErrNotFound) NotFound() bool {
+	return true
 }
 
 // Either a node or an error.
