@@ -2,6 +2,8 @@ package format
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sync"
 	"testing"
 
@@ -24,7 +26,7 @@ func (d *testDag) Get(ctx context.Context, cid cid.Cid) (Node, error) {
 	if n, ok := d.nodes[cid.KeyString()]; ok {
 		return n, nil
 	}
-	return nil, ErrNotFound
+	return nil, ErrNotFound{cid}
 }
 
 func (d *testDag) GetMany(ctx context.Context, cids []cid.Cid) <-chan *NodeOption {
@@ -35,7 +37,7 @@ func (d *testDag) GetMany(ctx context.Context, cids []cid.Cid) <-chan *NodeOptio
 		if n, ok := d.nodes[c.KeyString()]; ok {
 			out <- &NodeOption{Node: n}
 		} else {
-			out <- &NodeOption{Err: ErrNotFound}
+			out <- &NodeOption{Err: ErrNotFound{c}}
 		}
 	}
 	close(out)
@@ -142,5 +144,24 @@ func TestBatchOptions(t *testing.T) {
 	}
 	if b.opts.maxNodes != wantMaxNodes {
 		t.Fatalf("maxNodes incorrect, want: %d, got: %d", wantMaxNodes, b.opts.maxNodes)
+	}
+}
+
+func TestErrorTypes(t *testing.T) {
+	d := newTestDag()
+	notFoundNode := &EmptyNode{}
+	_, err := d.Get(context.Background(), notFoundNode.Cid())
+	if err == nil {
+		t.Fatal("should throw NotFound error")
+	}
+
+	err2 := fmt.Errorf("could not read: %w", err)
+
+	if !errors.Is(err, ErrNotFound{}) {
+		t.Fatal("should be an ErrNotFound")
+	}
+
+	if !errors.Is(err2, ErrNotFound{}) {
+		t.Fatal("should be an ErrNotFound")
 	}
 }
