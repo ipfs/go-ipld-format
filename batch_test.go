@@ -139,10 +139,10 @@ func TestBatchOptions(t *testing.T) {
 	wantMaxNodes := 500
 	d := newTestDag()
 	b := NewBatch(ctx, d, MaxSizeBatchOption(wantMaxSize), MaxNodesBatchOption(wantMaxNodes))
-	if b.opts.maxSize != wantMaxSize {
+	if b.opts.maxSize != wantMaxSize/parallelCommits {
 		t.Fatalf("maxSize incorrect, want: %d, got: %d", wantMaxSize, b.opts.maxSize)
 	}
-	if b.opts.maxNodes != wantMaxNodes {
+	if b.opts.maxNodes != wantMaxNodes/parallelCommits {
 		t.Fatalf("maxNodes incorrect, want: %d, got: %d", wantMaxNodes, b.opts.maxNodes)
 	}
 }
