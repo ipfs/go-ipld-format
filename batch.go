@@ -8,10 +8,10 @@ import (
 	cid "github.com/ipfs/go-cid"
 )
 
-// ParallelBatchCommits is the number of batch commits that can be in-flight before blocking.
+// parallelBatchCommits is the number of batch commits that can be in-flight before blocking.
 // TODO(ipfs/go-ipfs#4299): Experiment with multiple datastores, storage
 // devices, and CPUs to find the right value/formula.
-var ParallelBatchCommits = runtime.NumCPU() * 2
+var parallelCommits = runtime.NumCPU()
 
 // ErrNotCommited is returned when closing a batch that hasn't been successfully
 // committed.
@@ -32,11 +32,15 @@ func NewBatch(ctx context.Context, na NodeAdder, opts ...BatchOption) *Batch {
 	for _, o := range opts {
 		o(&bopts)
 	}
+
+	// Commit numCPU batches at once, but split the maximum buffer size over all commits in flight.
+	bopts.maxSize /= parallelCommits
+	bopts.maxNodes /= parallelCommits
 	return &Batch{
 		na:            na,
 		ctx:           ctx,
 		cancel:        cancel,
-		commitResults: make(chan error, ParallelBatchCommits),
+		commitResults: make(chan error, parallelCommits),
 		opts:          bopts,
 	}
 }
@@ -78,7 +82,7 @@ func (t *Batch) asyncCommit() {
 	if numBlocks == 0 {
 		return
 	}
-	if t.activeCommits >= ParallelBatchCommits {
+	if t.activeCommits >= parallelCommits {
 		select {
 		case err := <-t.commitResults:
 			t.activeCommits--
@@ -206,14 +210,16 @@ var defaultBatchOptions = batchOptions{
 	maxNodes: 128,
 }
 
-// MaxSizeBatchOption sets the maximum size of a Batch.
+// MaxSizeBatchOption sets the maximum amount of buffered data before writing
+// blocks.
 func MaxSizeBatchOption(size int) BatchOption {
 	return func(o *batchOptions) {
 		o.maxSize = size
 	}
 }
 
-// MaxNodesBatchOption sets the maximum number of nodes in a Batch.
+// MaxNodesBatchOption sets the maximum number of buffered nodes before writing
+// blocks.
 func MaxNodesBatchOption(num int) BatchOption {
 	return func(o *batchOptions) {
 		o.maxNodes = num
