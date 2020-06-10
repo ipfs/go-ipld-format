@@ -116,6 +116,9 @@ type NavigableNode interface {
 	// ChildTotal returns the number of children of the `ActiveNode`.
 	ChildTotal() uint
 
+	// GetIPLDNode returns actual IPLD Node
+	GetIPLDNode() Node
+
 	// TODO: Evaluate providing the `Cleanup` and `Reset` methods.
 
 	// Cleanup is an optional method that is called by the `Walker` when
