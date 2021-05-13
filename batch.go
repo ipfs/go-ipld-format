@@ -106,8 +106,6 @@ func (t *Batch) asyncCommit() {
 	t.activeCommits++
 	t.nodes = make([]Node, 0, numBlocks)
 	t.size = 0
-
-	return
 }
 
 // Add adds a node to the batch and commits the batch if necessary.

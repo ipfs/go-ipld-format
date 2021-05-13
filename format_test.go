@@ -10,10 +10,10 @@ import (
 
 type EmptyNode struct{}
 
-var EmptyNodeError error = errors.New("dummy node")
+var ErrEmptyNode error = errors.New("dummy node")
 
 func (n *EmptyNode) Resolve([]string) (interface{}, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *EmptyNode) Tree(string, int) []string {
@@ -21,7 +21,7 @@ func (n *EmptyNode) Tree(string, int) []string {
 }
 
 func (n *EmptyNode) ResolveLink([]string) (*Link, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *EmptyNode) Copy() Node {
