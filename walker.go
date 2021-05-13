@@ -163,9 +163,8 @@ var ErrDownNoChild = errors.New("can't go down, the child does not exist")
 // errUpOnRoot signals the end of the DAG after returning to the root.
 var errUpOnRoot = errors.New("can't go up, already on root")
 
-// EndOfDag wraps the `errUpOnRoot` and signals to the user that the
-// entire DAG has been iterated.
-var EndOfDag = errors.New("end of DAG")
+// ErrEndOfDag wsignals to the user that the entire DAG has been iterated.
+var ErrEndOfDag = errors.New("end of DAG")
 
 // ErrNextNoChild signals the end of this parent child nodes.
 var ErrNextNoChild = errors.New("can't go to the next child, no more child nodes in this parent")
