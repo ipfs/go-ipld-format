@@ -28,7 +28,7 @@ func InitNode(d []byte) *TestNode {
 }
 
 func (n *TestNode) Resolve([]string) (interface{}, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *TestNode) Tree(string, int) []string {
@@ -36,7 +36,7 @@ func (n *TestNode) Tree(string, int) []string {
 }
 
 func (n *TestNode) ResolveLink([]string) (*Link, []string, error) {
-	return nil, nil, EmptyNodeError
+	return nil, nil, ErrEmptyNode
 }
 
 func (n *TestNode) Copy() Node {
