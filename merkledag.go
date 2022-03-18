@@ -24,7 +24,7 @@ func (e ErrNotFound) Error() string {
 		return "ipld: node not found"
 	}
 
-	return fmt.Sprintf("ipld: %s not found", e.Cid)
+	return fmt.Sprintf("%s not found", e.Cid)
 }
 
 // Is allows to check whether any error is of this ErrNotFound type.
@@ -38,6 +38,7 @@ func (e ErrNotFound) Is(err error) bool {
 	}
 }
 
+// NotFound returns true.
 func (e ErrNotFound) NotFound() bool {
 	return true
 }
