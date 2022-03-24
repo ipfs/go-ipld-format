@@ -21,7 +21,7 @@ type ErrNotFound struct {
 // message for this error.
 func (e ErrNotFound) Error() string {
 	if e.Cid == cid.Undef {
-		return "ipld: node not found"
+		return "node not found"
 	}
 
 	return fmt.Sprintf("%s not found", e.Cid)
