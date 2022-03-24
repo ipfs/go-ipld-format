@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 
 	cid "github.com/ipfs/go-cid"
 )
@@ -43,10 +44,17 @@ func (e ErrNotFound) NotFound() bool {
 	return true
 }
 
+var errNotFoundMatcher = regexp.MustCompile(`\w+ not found`)
+
 // IsNotFound returns if the given error is or wraps an ErrNotFound
 // (equivalent to errors.Is(err, ErrNotFound{}))
 func IsNotFound(err error) bool {
-	return errors.Is(err, ErrNotFound{})
+	if errors.Is(err, ErrNotFound{}) {
+		return true
+	}
+
+	// Fallback to string comparision for checks to work accross HTTP boundry
+	return errNotFoundMatcher.Match([]byte(err.Error()))
 }
 
 // Either a node or an error.
