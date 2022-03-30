@@ -3,7 +3,6 @@ package format
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	cid "github.com/ipfs/go-cid"
 )
@@ -21,10 +20,10 @@ type ErrNotFound struct {
 // message for this error.
 func (e ErrNotFound) Error() string {
 	if e.Cid == cid.Undef {
-		return "node not found"
+		return "ipld: could not find node"
 	}
 
-	return fmt.Sprintf("%s not found", e.Cid)
+	return "ipld: could not find " + e.Cid.String()
 }
 
 // Is allows to check whether any error is of this ErrNotFound type.
