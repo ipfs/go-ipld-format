@@ -2,9 +2,10 @@ package format
 
 import (
 	"context"
+	"testing"
+
 	"github.com/ipfs/go-cid"
 	mh "github.com/multiformats/go-multihash"
-	"testing"
 )
 
 type TestNode struct {
