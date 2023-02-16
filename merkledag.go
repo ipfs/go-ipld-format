@@ -2,7 +2,6 @@ package format
 
 import (
 	"context"
-	"errors"
 
 	cid "github.com/ipfs/go-cid"
 )
@@ -28,6 +27,8 @@ func (e ErrNotFound) Error() string {
 
 // Is allows to check whether any error is of this ErrNotFound type.
 // Do not use this directly, but rather errors.Is(yourError, ErrNotFound).
+// For maximum compatibility you should prefer IsNotFound() instead as it will
+// also match other compatible NotFound error types.
 func (e ErrNotFound) Is(err error) bool {
 	switch err.(type) {
 	case ErrNotFound:
@@ -42,10 +43,14 @@ func (e ErrNotFound) NotFound() bool {
 	return true
 }
 
-// IsNotFound returns if the given error is or wraps an ErrNotFound
-// (equivalent to errors.Is(err, ErrNotFound{}))
+// IsNotFound returns true if the error is a ErrNotFound. As it uses a
+// feature-test, it is also compatible with other NotFound error types,
+// including github.com/ipld/go-ipld-prime/storage#ErrNotFound.
 func IsNotFound(err error) bool {
-	return errors.Is(err, ErrNotFound{})
+	if nf, ok := err.(interface{ NotFound() bool }); ok {
+		return nf.NotFound()
+	}
+	return false
 }
 
 // Either a node or an error.
