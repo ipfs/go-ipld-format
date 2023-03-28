@@ -4,53 +4,31 @@ import (
 	"context"
 
 	cid "github.com/ipfs/go-cid"
+	"github.com/ipld/go-ipld-prime/storage"
 )
 
 // ErrNotFound is used to signal when a Node could not be found. The specific
 // meaning will depend on the DAGService implementation, which may be trying
 // to read nodes locally but also, trying to find them remotely.
 //
-// The Cid field can be filled in to provide additional context.
-type ErrNotFound struct {
-	Cid cid.Cid
-}
-
-// Error implements the error interface and returns a human-readable
-// message for this error.
-func (e ErrNotFound) Error() string {
-	if e.Cid == cid.Undef {
-		return "ipld: could not find node"
-	}
-
-	return "ipld: could not find " + e.Cid.String()
-}
-
-// Is allows to check whether any error is of this ErrNotFound type.
-// Do not use this directly, but rather errors.Is(yourError, ErrNotFound).
-// For maximum compatibility you should prefer IsNotFound() instead as it will
-// also match other compatible NotFound error types.
-func (e ErrNotFound) Is(err error) bool {
-	switch err.(type) {
-	case ErrNotFound:
-		return true
-	default:
-		return false
-	}
-}
-
-// NotFound returns true.
-func (e ErrNotFound) NotFound() bool {
-	return true
-}
+// Deprecated: use github.com/ipld/go-ipld-prime/storage#ErrNotFound instead.
+type ErrNotFound = storage.ErrNotFound
 
 // IsNotFound returns true if the error is a ErrNotFound. As it uses a
 // feature-test, it is also compatible with other NotFound error types,
 // including github.com/ipld/go-ipld-prime/storage#ErrNotFound.
+//
+// errors.Is() should be preferred as the standard Go way to test for errors;
+// however due to the move of the legacy ErrNotFound to
+// github.com/ipld/go-ipld-prime/storage, it may not report correctly where
+// older block storage packages emit the legacy ErrNotFound. The IsNotFound()
+// function provides a maximally compatible matching function that should be
+// able to determine whether an ErrNotFound, either new or legacy, exists within
+// a wrapped error chain.
+//
+// Deprecated: use github.com/ipld/go-ipld-prime/storage#IsNotFound instead.
 func IsNotFound(err error) bool {
-	if nf, ok := err.(interface{ NotFound() bool }); ok {
-		return nf.NotFound()
-	}
-	return false
+	return storage.IsNotFound(err)
 }
 
 // Either a node or an error.

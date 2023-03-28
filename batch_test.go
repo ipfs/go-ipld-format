@@ -26,7 +26,7 @@ func (d *testDag) Get(ctx context.Context, cid cid.Cid) (Node, error) {
 	if n, ok := d.nodes[cid.KeyString()]; ok {
 		return n, nil
 	}
-	return nil, ErrNotFound{cid}
+	return nil, ErrNotFound{Key: cid.KeyString()}
 }
 
 func (d *testDag) GetMany(ctx context.Context, cids []cid.Cid) <-chan *NodeOption {
@@ -37,7 +37,7 @@ func (d *testDag) GetMany(ctx context.Context, cids []cid.Cid) <-chan *NodeOptio
 		if n, ok := d.nodes[c.KeyString()]; ok {
 			out <- &NodeOption{Node: n}
 		} else {
-			out <- &NodeOption{Err: ErrNotFound{c}}
+			out <- &NodeOption{Err: ErrNotFound{Key: c.KeyString()}}
 		}
 	}
 	close(out)
