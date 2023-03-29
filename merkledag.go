@@ -10,8 +10,6 @@ import (
 // ErrNotFound is used to signal when a Node could not be found. The specific
 // meaning will depend on the DAGService implementation, which may be trying
 // to read nodes locally but also, trying to find them remotely.
-//
-// Deprecated: use github.com/ipld/go-ipld-prime/storage#ErrNotFound instead.
 type ErrNotFound = storage.ErrNotFound
 
 // IsNotFound returns true if the error is a ErrNotFound. As it uses a
@@ -25,8 +23,6 @@ type ErrNotFound = storage.ErrNotFound
 // function provides a maximally compatible matching function that should be
 // able to determine whether an ErrNotFound, either new or legacy, exists within
 // a wrapped error chain.
-//
-// Deprecated: use github.com/ipld/go-ipld-prime/storage#IsNotFound instead.
 func IsNotFound(err error) bool {
 	return storage.IsNotFound(err)
 }
