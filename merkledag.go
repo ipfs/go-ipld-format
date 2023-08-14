@@ -2,50 +2,29 @@ package format
 
 import (
 	"context"
-	"errors"
 
 	cid "github.com/ipfs/go-cid"
+	"github.com/ipld/go-ipld-prime/storage"
 )
 
 // ErrNotFound is used to signal when a Node could not be found. The specific
 // meaning will depend on the DAGService implementation, which may be trying
 // to read nodes locally but also, trying to find them remotely.
+type ErrNotFound = storage.ErrNotFound
+
+// IsNotFound returns true if the error is a ErrNotFound. As it uses a
+// feature-test, it is also compatible with other NotFound error types,
+// including github.com/ipld/go-ipld-prime/storage#ErrNotFound.
 //
-// The Cid field can be filled in to provide additional context.
-type ErrNotFound struct {
-	Cid cid.Cid
-}
-
-// Error implements the error interface and returns a human-readable
-// message for this error.
-func (e ErrNotFound) Error() string {
-	if e.Cid == cid.Undef {
-		return "ipld: could not find node"
-	}
-
-	return "ipld: could not find " + e.Cid.String()
-}
-
-// Is allows to check whether any error is of this ErrNotFound type.
-// Do not use this directly, but rather errors.Is(yourError, ErrNotFound).
-func (e ErrNotFound) Is(err error) bool {
-	switch err.(type) {
-	case ErrNotFound:
-		return true
-	default:
-		return false
-	}
-}
-
-// NotFound returns true.
-func (e ErrNotFound) NotFound() bool {
-	return true
-}
-
-// IsNotFound returns if the given error is or wraps an ErrNotFound
-// (equivalent to errors.Is(err, ErrNotFound{}))
+// errors.Is() should be preferred as the standard Go way to test for errors;
+// however due to the move of the legacy ErrNotFound to
+// github.com/ipld/go-ipld-prime/storage, it may not report correctly where
+// older block storage packages emit the legacy ErrNotFound. The IsNotFound()
+// function provides a maximally compatible matching function that should be
+// able to determine whether an ErrNotFound, either new or legacy, exists within
+// a wrapped error chain.
 func IsNotFound(err error) bool {
-	return errors.Is(err, ErrNotFound{})
+	return storage.IsNotFound(err)
 }
 
 // Either a node or an error.

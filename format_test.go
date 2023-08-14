@@ -32,7 +32,7 @@ func (n *EmptyNode) Cid() cid.Cid {
 	id, err := cid.Prefix{
 		Version:  1,
 		Codec:    cid.Raw,
-		MhType:   mh.ID,
+		MhType:   mh.IDENTITY,
 		MhLength: 0,
 	}.Sum(nil)
 
