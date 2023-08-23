@@ -2,6 +2,7 @@ package format
 
 import (
 	"fmt"
+
 	blocks "github.com/ipfs/go-block-format"
 )
 
