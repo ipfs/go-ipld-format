@@ -21,7 +21,7 @@ func TestDecode(t *testing.T) {
 	id, err := cid.Prefix{
 		Version:  1,
 		Codec:    cid.Raw,
-		MhType:   mh.ID,
+		MhType:   mh.IDENTITY,
 		MhLength: 0,
 	}.Sum(nil)
 
@@ -59,7 +59,7 @@ func TestRegistryDecode(t *testing.T) {
 	id, err := cid.Prefix{
 		Version:  1,
 		Codec:    cid.Raw,
-		MhType:   mh.ID,
+		MhType:   mh.IDENTITY,
 		MhLength: 0,
 	}.Sum(nil)
 
