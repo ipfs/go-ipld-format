@@ -21,4 +21,5 @@ require (
 	lukechampine.com/blake3 v1.1.6 // indirect
 )
 
-go 1.20
+go 1.21
+
