@@ -10,7 +10,7 @@ import (
 )
 
 func TestDecode(t *testing.T) {
-	decoder := func(b blocks.Block) (Node, error) {
+	decoder := func(b blocksInterface) (Node, error) {
 		node := &EmptyNode{}
 		if b.RawData() != nil || !b.Cid().Equals(node.Cid()) {
 			return nil, errors.New("can only decode empty blocks")
@@ -48,7 +48,7 @@ func TestDecode(t *testing.T) {
 }
 
 func TestRegistryDecode(t *testing.T) {
-	decoder := func(b blocks.Block) (Node, error) {
+	decoder := func(b blocksInterface) (Node, error) {
 		node := &EmptyNode{}
 		if b.RawData() != nil || !b.Cid().Equals(node.Cid()) {
 			return nil, errors.New("can only decode empty blocks")

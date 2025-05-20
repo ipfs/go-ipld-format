@@ -2,12 +2,10 @@ package format
 
 import (
 	"fmt"
-
-	blocks "github.com/ipfs/go-block-format"
 )
 
 // DecodeBlockFunc functions decode blocks into nodes.
-type DecodeBlockFunc func(block blocks.Block) (Node, error)
+type DecodeBlockFunc func(block blocksInterface) (Node, error)
 
 // Registry is a structure for storing mappings of multicodec IPLD codec numbers to DecodeBlockFunc functions.
 //
@@ -41,7 +39,7 @@ func (r *Registry) Register(codec uint64, decoder DecodeBlockFunc) {
 	r.decoders[codec] = decoder
 }
 
-func (r *Registry) Decode(block blocks.Block) (Node, error) {
+func (r *Registry) Decode(block blocksInterface) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
 	if node, ok := block.(Node); ok {
 		return node, nil
@@ -50,18 +48,17 @@ func (r *Registry) Decode(block blocks.Block) (Node, error) {
 	ty := block.Cid().Type()
 	r.ensureInit()
 	decoder, ok := r.decoders[ty]
-
-	if ok {
-		return decoder(block)
-	} else {
+	if !ok {
 		// TODO: get the *long* name for this format
 		return nil, fmt.Errorf("unrecognized object type: %d", ty)
 	}
+
+	return decoder(block)
 }
 
 // Decode decodes the given block using passed DecodeBlockFunc.
 // Note: this is just a helper function, consider using the DecodeBlockFunc itself rather than this helper
-func Decode(block blocks.Block, decoder DecodeBlockFunc) (Node, error) {
+func Decode(block blocksInterface, decoder DecodeBlockFunc) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
 	if node, ok := block.(Node); ok {
 		return node, nil

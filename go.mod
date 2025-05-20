@@ -3,7 +3,7 @@ module github.com/ipfs/go-ipld-format
 go 1.23.8
 
 require (
-	github.com/ipfs/go-block-format v0.2.1
+	github.com/ipfs/go-block-format v0.2.2-0.20250502204103-e82c5339287f
 	github.com/ipfs/go-cid v0.5.0
 	github.com/multiformats/go-multihash v0.2.3
 )
@@ -20,5 +20,5 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
-	lukechampine.com/blake3 v1.4.0 // indirect
+	lukechampine.com/blake3 v1.4.1 // indirect
 )

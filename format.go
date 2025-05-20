@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	blocks "github.com/ipfs/go-block-format"
-
 	cid "github.com/ipfs/go-cid"
 )
 
@@ -19,12 +17,19 @@ type Resolver interface {
 	Tree(path string, depth int) []string
 }
 
+type blocksInterface interface {
+	RawData() []byte
+	Cid() cid.Cid
+	String() string
+	Loggable() map[string]interface{}
+}
+
 // Node is the base interface all IPLD nodes must implement.
 //
 // Nodes are **Immutable** and all methods defined on the interface are
 // **Thread Safe**.
 type Node interface {
-	blocks.Block
+	blocksInterface
 	Resolver
 
 	// ResolveLink is a helper function that calls resolve and asserts the
