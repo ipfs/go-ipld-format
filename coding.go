@@ -2,10 +2,12 @@ package format
 
 import (
 	"fmt"
+
+	blocks "github.com/ipfs/go-block-format"
 )
 
 // DecodeBlockFunc functions decode blocks into nodes.
-type DecodeBlockFunc func(block blocksInterface) (Node, error)
+type DecodeBlockFunc func(block blocks.Interface) (Node, error)
 
 // Registry is a structure for storing mappings of multicodec IPLD codec numbers to DecodeBlockFunc functions.
 //
@@ -39,7 +41,7 @@ func (r *Registry) Register(codec uint64, decoder DecodeBlockFunc) {
 	r.decoders[codec] = decoder
 }
 
-func (r *Registry) Decode(block blocksInterface) (Node, error) {
+func (r *Registry) Decode(block blocks.Interface) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
 	if node, ok := block.(Node); ok {
 		return node, nil
@@ -58,7 +60,7 @@ func (r *Registry) Decode(block blocksInterface) (Node, error) {
 
 // Decode decodes the given block using passed DecodeBlockFunc.
 // Note: this is just a helper function, consider using the DecodeBlockFunc itself rather than this helper
-func Decode(block blocksInterface, decoder DecodeBlockFunc) (Node, error) {
+func Decode(block blocks.Interface, decoder DecodeBlockFunc) (Node, error) {
 	// Short-circuit by cast if we already have a Node.
 	if node, ok := block.(Node); ok {
 		return node, nil

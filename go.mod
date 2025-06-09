@@ -3,7 +3,7 @@ module github.com/ipfs/go-ipld-format
 go 1.23.8
 
 require (
-	github.com/ipfs/go-block-format v0.2.2-0.20250502204103-e82c5339287f
+	github.com/ipfs/go-block-format v0.2.2-0.20250609150238-0bd1b92f3aaa
 	github.com/ipfs/go-cid v0.5.0
 	github.com/multiformats/go-multihash v0.2.3
 )
