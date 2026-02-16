@@ -1,7 +1,6 @@
 package format
 
 import (
-	"context"
 	"testing"
 
 	"github.com/ipfs/go-cid"
@@ -28,7 +27,7 @@ func InitNode(d []byte) *TestNode {
 	}
 }
 
-func (n *TestNode) Resolve([]string) (interface{}, []string, error) {
+func (n *TestNode) Resolve([]string) (any, []string, error) {
 	return nil, nil, ErrEmptyNode
 }
 
@@ -56,7 +55,7 @@ func (n *TestNode) Links() []*Link {
 	return n.links
 }
 
-func (n *TestNode) Loggable() map[string]interface{} {
+func (n *TestNode) Loggable() map[string]any {
 	return nil
 }
 
@@ -102,8 +101,7 @@ func (n *TestNode) AddRawLink(name string, l *Link) error {
 }
 
 func TestCopy(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	from := newTestDag()
 
 	root := InitNode([]byte("level0"))

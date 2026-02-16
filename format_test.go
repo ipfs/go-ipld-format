@@ -12,7 +12,7 @@ type EmptyNode struct{}
 
 var ErrEmptyNode error = errors.New("dummy node")
 
-func (n *EmptyNode) Resolve([]string) (interface{}, []string, error) {
+func (n *EmptyNode) Resolve([]string) (any, []string, error) {
 	return nil, nil, ErrEmptyNode
 }
 
@@ -46,7 +46,7 @@ func (n *EmptyNode) Links() []*Link {
 	return nil
 }
 
-func (n *EmptyNode) Loggable() map[string]interface{} {
+func (n *EmptyNode) Loggable() map[string]any {
 	return nil
 }
 
