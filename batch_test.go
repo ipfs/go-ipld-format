@@ -79,12 +79,11 @@ func (d *testDag) RemoveMany(ctx context.Context, cids []cid.Cid) error {
 var _ DAGService = new(testDag)
 
 func TestBatch(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	d := newTestDag()
 	b := NewBatch(ctx, d)
-	for i := 0; i < 1000; i++ {
+	for range 1000 {
 		// It would be great if we could use *many* different nodes here
 		// but we can't add any dependencies and I don't feel like adding
 		// any more testing code.
@@ -113,11 +112,10 @@ func TestBatch(t *testing.T) {
 
 func TestBufferedDAG(t *testing.T) {
 	ds := newTestDag()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	var bdag DAGService = NewBufferedDAG(ctx, ds)
 
-	for i := 0; i < 1000; i++ {
+	for range 1000 {
 		n := new(EmptyNode)
 		if err := bdag.Add(ctx, n); err != nil {
 			t.Fatal(err)
@@ -132,8 +130,7 @@ func TestBufferedDAG(t *testing.T) {
 }
 
 func TestBatchOptions(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	wantMaxSize := 8 << 10
 	wantMaxNodes := 500
